@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Horizons Institute</title>
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #10b981;
+            --text-color: #1f2937;
+            --background-color: #f3f4f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 15px;
+        }
+
+        nav a {
+            margin-left: 15px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: var(--primary-color);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+        }
+
+        .faculty-card {
+            text-align: center;
+        }
+
+        .faculty-card img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .close-modal {
+            float: right;
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>Learning Horizons Institute</h1>
+        </div>
+        <nav>
+            <a href="#courses">Courses</a>
+            <a href="#faculty">Faculty</a>
+            <a href="#about">About</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <section id="courses">
+            <h2 class="section-title">Our Courses</h2>
+            <div id="coursesGrid" class="card-grid"></div>
+        </section>
+
+        <section id="faculty">
+            <h2 class="section-title">Our Faculty</h2>
+            <div id="facultyGrid" class="card-grid"></div>
+        </section>
+
+        <section id="about">
+            <h2 class="section-title">About Us</h2>
+            <p class="card">
+                Founded in 2005, Learning Horizons Institute is committed to providing high-quality education 
+                and preparing students for the challenges of the modern world through innovative teaching 
+                and cutting-edge curriculum.
+            </p>
+        </section>
+    </div>
+
+    <div id="courseModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <p id="modalDescription"></p>
+            <p id="modalDetails"></p>
+        </div>
+    </div>
+
+    <script>
+        const courses = [
+            {
+                id: 1,
+                title: 'Computer Science',
+                description: 'Comprehensive program covering programming, algorithms, and emerging technologies.',
+                duration: '3 Years',
+                type: 'Full-Time'
+            },
+            {
+                id: 2,
+                title: 'Business Administration',
+                description: 'Strategic management and leadership training for future business leaders.',
+                duration: '4 Years',
+                type: 'Full-Time'
+            },
+            {
+                id: 3,
+                title: 'Data Science',
+                description: 'Advanced analytics and data interpretation techniques.',
+                duration: '2 Years',
+                type: 'Full-Time'
+            }
+        ];
+
+        const faculty = [
+            {
+                name: 'Dr. Emily Rodriguez',
+                image: 'https://img.freepik.com/free-photo/lifestyle-people-emotions-casual-concept-confident-nice-smiling-asian-woman-cross-arms-chest-confident-ready-help-listening-coworkers-taking-part-conversation_1258-59335.jpg',
+                department: 'Computer Science',
+                bio: 'Expert in Machine Learning and AI Research'
+            },
+            {
+                name: 'Prof. Michael Chen',
+                image: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?cs=srgb&dl=pexels-pixabay-220453.jpg&fm=jpg',
+                department: 'Business Administration',
+                bio: 'International Business Strategy Specialist'
+            },
+            {
+                name: 'Dr. Sarah Thompson',
+                image: 'https://cdn2.psychologytoday.com/assets/styles/manual_crop_4_3_1200x900/public/field_blog_entry_images/2018-09/shutterstock_648907024.jpg?itok=eaVcXTz5',
+                department: 'Data Science',
+                bio: 'Big Data and Analytics Researcher'
+            }
+        ];
+
+        function renderCourses() {
+            const coursesGrid = document.getElementById('coursesGrid');
+            courses.forEach(course => {
+                const courseCard = document.createElement('div');
+                courseCard.classList.add('card');
+                courseCard.innerHTML = `
+                    <h3>${course.title}</h3>
+                    <p>${course.description}</p>
+                `;
+                courseCard.addEventListener('click', () => openCourseModal(course.id));
+                coursesGrid.appendChild(courseCard);
+            });
+        }
+
+        function renderFaculty() {
+            const facultyGrid = document.getElementById('facultyGrid');
+            faculty.forEach(member => {
+                const facultyCard = document.createElement('div');
+                facultyCard.classList.add('card', 'faculty-card');
+                facultyCard.innerHTML = `
+                    <img src=${member.image} alt="${member.name}">
+                    <h3>${member.name}</h3>
+                    <p>${member.department}</p>
+                    <p>${member.bio}</p>
+                `;
+                facultyGrid.appendChild(facultyCard);
+            });
+        }
+
+        function openCourseModal(courseId) {
+            const course = courses.find(c => c.id === courseId);
+            const modal = document.getElementById('courseModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalDescription = document.getElementById('modalDescription');
+            const modalDetails = document.getElementById('modalDetails');
+
+            modalTitle.textContent = course.title;
+            modalDescription.textContent = course.description;
+            modalDetails.textContent = `Duration: ${course.duration} | Type: ${course.type}`;
+            
+            modal.style.display = 'flex';
+        }
+
+        document.querySelector('.close-modal').addEventListener('click', () => {
+            document.getElementById('courseModal').style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            const modal = document.getElementById('courseModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        renderCourses();
+        renderFaculty();
+    </script>
+</body>
+</html>
